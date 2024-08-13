@@ -1,7 +1,7 @@
 {
   "name": "yogico",
   "version": "0.1.0",
-  "homepage": "https://yogico.kr",
+  "homepage": "https://yogibokorea.github.io/",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.1",
@@ -64,9 +64,9 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yogico1/yogico1.github.io.git"
+    "url": "https://github.com/YogiboKorea/YogiboKorea.github.io"
   },
   "bugs": {
-    "url": "https://yogico.kr/"
+    "url": "https://yogibokorea.github.io/"
   }
 }
