@@ -43,6 +43,17 @@ let news_bord = createSlice({
 
 
         {
+            img:<img src="https://yogibo.kr/yogico/img/banner/스카이-요기보존.jpg"/>,
+            title:'성남FC, 10월 7일 홈경기',
+            sub_title:'스카이 요기보존 오픈!',
+            sub_content:` 요기보(Yogibo)는 라이프스타일 전문브랜드로 소파는 물론 바디필로우, 쿠션 액세서리, 캐릭터 인형 등 힐링과 휴식과 관련된 제품을 판매하는 글로벌 브랜드다.
+            요기보(Yogibo)는 대표 상품인 빈백 소파뿐만 아니라 다양한 형태의 소파를 개발해 선보이고 있고 다양한 스포츠 구단과 함께 협업해왔다.
+            2021년 야구를 시작으로 농구, 배구 등 다양한 스포츠 경기를 누워서 관람하도록 하는 요기보존을 구성했고 축구에서는 올 시즌 성남FC와 처음으로 손잡았다.`,
+            more:<div onClick={() => window.open('https://www.interfootball.co.kr/news/articleView.html?idxno=615321')}>더알아보기</div>
+        },
+
+
+        {
             img:<img src="https://yogibo.kr/yogico/img/banner/보코서울강남.jpg"/>,
             title:'보코서울강남, 프리미엄 빈백 브랜드',
             sub_title:'요기보와 함께하는 ‘캠핑 위드 요기보’ 패키지',
