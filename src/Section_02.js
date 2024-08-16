@@ -4,7 +4,7 @@ function Section_02(){
       <section class="p_l_d_b2">
       <div class="boarder_wrapper" data-aos="fade-up" data-aos-duration="800">
          <div class="news_title">NEWS</div>
-         <div class="news_title_more"  onClick={() => window.open('https://yogico.kr/news', '_blank')}>
+         <div class="news_title_more"  onClick={() => window.open('/news', '_blank')}>
          더보기 &nbsp;<img src="http://yogibo.kr//web/img/icon/new/arrow_right.svg" alt=""></img>
          </div>
          
