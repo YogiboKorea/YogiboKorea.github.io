@@ -1,11 +1,6 @@
 {
   "name": "yogico",
   "version": "0.1.0",
-<<<<<<< HEAD
-  "homepage": "https://haonlee.shop/",
-=======
-  "homepage": "https://yogibokorea.github.io/",
->>>>>>> 5bb266c86c3a3391f76f4be315a02747431b7d34
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.1",
@@ -68,16 +63,13 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YogiboKorea/YogiboKorea.github.io"
+    "url": "https://github.com/yogico1/yogico1.github.io.git"
   },
   "bugs": {
-<<<<<<< HEAD
-    "url": "https://haonlee.shop/"
+    "url": "https://yogico.kr/"
   },
+  "homepage": "https://yogico.kr",
   "devDependencies": {
     "react-snap": "^1.23.0"
-=======
-    "url": "https://yogibokorea.github.io/"
->>>>>>> 5bb266c86c3a3391f76f4be315a02747431b7d34
   }
 }
