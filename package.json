@@ -1,7 +1,7 @@
 {
   "name": "yogico",
   "version": "0.1.0",
-  "homepage": "https://yogibokorea.github.io/",
+  "homepage": "https://haonlee.shop/",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.1",
@@ -67,6 +67,9 @@
     "url": "https://github.com/YogiboKorea/YogiboKorea.github.io"
   },
   "bugs": {
-    "url": "https://yogibokorea.github.io/"
+    "url": "https://haonlee.shop/"
+  },
+  "devDependencies": {
+    "react-snap": "^1.23.0"
   }
 }
