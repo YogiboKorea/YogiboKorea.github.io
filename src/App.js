@@ -1,267 +1,309 @@
-/*eslint-disable*/
-import 'bootstrap/dist/css/bootstrap.min.css';
-import {Button} from 'react-bootstrap'
-import { BrowserRouter, Routes,Route, Link, useNavigate, Outlet } from 'react-router-dom';
-import Visual from './Visual.js'
-import News from './News.js'
-import Section from './Section.js'
-import Partners from './Partners.js'
-import React from 'react';
-import jquery from 'jquery';
-import $ from 'jquery';
-import './css/Visual.css';
-import './css/aside_menu.css';
-import './App.css';
-import Choice from './Choice.js';
-import Careers from './Careers.js';
-import Footer from './Footer.js';
-import News_letter from './News_letter.js';
-import Corporation from './Corporation.js';
-import Careers2 from './Careers2.js'
+// ContactModal.js
+import React, { useState, useRef } from 'react';
+import styled from 'styled-components';
+import axios from 'axios';
 
-import Service from './Service.js';
-import AOS, { init } from "aos";
-import "aos/dist/aos.css";
+const Overlay = styled.div`
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: #111;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+`;
 
-AOS.init();  
+const Modal = styled.div`
+  position: relative;
+  width: 80%;
+  max-width: 1200px;
+  padding: 40px;
+  box-sizing: border-box;
+  color: #fff;
 
-function App() {
-/*
-$(function(){
-  $('.ham_icon').on('click',function(){
-    if($('.aside_menu').find('.miri')){
-      $('.block_main').show();
-    }else{
-      $('.block_main').hide();
+  @media (max-width: 768px) {
+    width: 90%;
+    padding: 20px;
+  }
+`;
+
+const CloseBtn = styled.div`
+  position: absolute;
+  top: 20px; right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+
+  @media (max-width: 480px) {
+    top: 10px; right: 10px;
+    font-size: 20px;
+  }
+`;
+
+const Title2 = styled.h1`
+  margin: 0;
+  font-size: 100px;
+  font-weight: bold;
+  text-align: center;
+
+  @media (max-width: 768px) { font-size: 48px; }
+  @media (max-width: 480px) { font-size: 36px; }
+`;
+
+const Title = styled.h1`
+  margin: 0;
+  font-size: 72px;
+  font-weight: bold;
+  text-align: center;
+
+  @media (max-width: 768px) { font-size: 48px; }
+  @media (max-width: 480px) { font-size: 36px; }
+`;
+
+const Subtitle = styled.p`
+  margin: 10px 0 40px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+
+  @media (max-width: 768px) { font-size: 16px; margin-bottom: 20px; }
+`;
+
+const Form = styled.form`
+  width: 100%;
+`;
+
+const Columns = styled.div`
+  display: flex;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 30px;
+  }
+`;
+
+const Left = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+`;
+
+const Right = styled.div`
+  flex: 1;
+`;
+
+const StyledInput = styled.input`
+  width: 100%;
+  padding: 15px;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: #222;
+  color: #fff;
+
+  &::placeholder {
+    color: #999;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+    font-size: 14px;
+  }
+`;
+
+/* ── 첨부파일 전용 스타일 ── */
+const FileInputWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+const FileDisplayInput = styled.input`
+  width: 100%;
+  padding: 15px;
+  padding-right: 130px;       /* 버튼 자리 확보 */
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+  font-size: 16px;
+
+  &::placeholder {
+    color: #888;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #999;
+  }
+`;
+
+const SearchButton = styled.button`
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+`;
+
+const HiddenFileInput = styled.input`
+  display: none;
+`;
+
+const StyledTextarea = styled.textarea`
+  width: 100%;
+  height: 260px;
+  padding: 15px;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: 16px;
+  background: #222;
+  color: #fff;
+
+  &::placeholder {
+    color: #999;
+  }
+
+  @media (max-width: 768px) {
+    height: 180px;
+    font-size: 14px;
+    padding: 12px;
+  }
+`;
+
+const SendButton = styled.button`
+  display: block;
+  margin: 40px auto 0;
+  padding: 15px 60px;
+  background: transparent;
+  border: 1px solid #fff;
+  font-size: 20px;
+  cursor: pointer;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 12px 0;
+    font-size: 18px;
+  }
+  @media (max-width: 480px) {
+    font-size: 16px;
+    margin-top: 20px;
+  }
+`;
+
+export default function ContactModal({ onClose = () => {} }) {
+  const [companyEmail, setCompanyEmail] = useState('');
+  const [companyName, setCompanyName]   = useState('');
+  const [file, setFile]                 = useState(null);
+  const [fileName, setFileName]         = useState('');
+  const [message, setMessage]           = useState('');
+  const fileInputRef                    = useRef(null);
+
+  const handleFileClick = () => fileInputRef.current.click();
+  const handleFileChange = e => {
+    const f = e.target.files[0];
+    if (f) {
+      setFile(f);
+      setFileName(f.name);
     }
-  })
-})
-*/
-  //만약에 miri 단어가 있다면 .header_logo 에 a태그를 삭제 해줘
+  };
 
-//제이쿼리 Gnb공간 
-$(function(){
-  var num = 1;
-  $('.ham_icon,.gnb_black,.news_txt').on('click',function(){
-     num++
-    if(num % 2 == 0){
-      $('.aside_menu').addClass('miri')
-      $('.gnb_black').addClass('miri_dim')
-      $('.line').removeClass('init');
-      $('#line-top').toggleClass('line-top').toggleClass('top-reverse');
-      $('#line-mid').toggleClass('line-mid').toggleClass('mid-reverse');
-      $('#line-bot').toggleClass('line-bot').toggleClass('bot-reverse'); 
-      $('.header_vertical_txt ,.main_con').addClass('blo')   
-    }else{
-      $('.header_vertical_txt,.main_con').removeClass('blo')
-      $('.aside_menu').removeClass('miri')
-      $('.gnb_black').removeClass('miri_dim')
-      $('.line').removeClass('init');
-      $('#line-top').toggleClass('line-top').toggleClass('top-reverse');
-      $('#line-mid').toggleClass('line-mid').toggleClass('mid-reverse');
-      $('#line-bot').toggleClass('line-bot').toggleClass('bot-reverse');  
+  const handleSubmit = async e => {
+    e.preventDefault();
+    if (!companyEmail) {
+      alert('Company Email is required.');
+      return;
     }
-  })
-})
-$(function(){
-  $('.header_vertical_txt').on('click',function(){
-    if($('.header_vertical_txt').hasClass('blo')==true){
-      $('.header_vertical_txt').removeClass('blo')
-      $('.aside_menu').removeClass('miri')
-      $('.gnb_black').removeClass('miri_dim')
-      $('.line').removeClass('init');
-      $('#line-top').toggleClass('line-top').toggleClass('top-reverse');
-      $('#line-mid').toggleClass('line-mid').toggleClass('mid-reverse');
-      $('#line-bot').toggleClass('line-bot').toggleClass('bot-reverse'); 
+
+      const formData = new FormData();
+      formData.append('companyEmail',  companyEmail);        // companyEmail → company
+      formData.append('companyName',  companyName);         // companyName → contact
+      formData.append('url',      '');                  // URL 필드를 빼지 않으려면 빈 스트링이라도 보내주세요
+
+
+      if (file) formData.append('attachment', file);
+        formData.append('message',  message);
+    try {
+      await axios.post(
+        'https://port-0-ychat-lzgmwhc4d9883c97.sel4.cloudtype.app/send-email',
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+      alert('Your request has been sent!');
+      onClose();
+    } catch (err) {
+      console.error('전송 오류:', err);
+      alert('Send failed: ' + (err.response?.data?.error || err.message));
     }
-  })
-})
+  };
 
-$(function(){
-  $('.header_vertical_txt').on('click',function(){
-    if($('.header_vertical_txt').hasClass('blo')==true){
-      $('.header_vertical_txt').removeClass('blo')
-      $('.aside_menu').removeClass('miri')
-      $('.gnb_black').removeClass('miri_dim')
-      $('.line').removeClass('init');
-      $('#line-top').toggleClass('line-top').toggleClass('top-reverse');
-      $('#line-mid').toggleClass('line-mid').toggleClass('mid-reverse');
-      $('#line-bot').toggleClass('line-bot').toggleClass('bot-reverse'); 
-    }
-  })
-})
-$(function(){
-  $('.main_con').on('click',function(){
-    if($('.main_con').hasClass('blo')==true){
-      $('.main_con').removeClass('blo')
-      $('.aside_menu').removeClass('miri')
-      $('.gnb_black').removeClass('miri_dim')
-      $('.line').removeClass('init');
-      $('#line-top').toggleClass('line-top').toggleClass('top-reverse');
-      $('#line-mid').toggleClass('line-mid').toggleClass('mid-reverse');
-      $('#line-bot').toggleClass('line-bot').toggleClass('bot-reverse'); 
-    }
-  })
-})
-
-
-//탭 공간
-$(function(){
-  $('.careers_select li').click(function() {
-    var activeTab = $(this).attr('data-tab');
-    $('.careers_select li').removeClass('current');
-    $('.tabcontent').removeClass('current');
-    $(this).addClass('current');
-    $('#' + activeTab).addClass('current');
-  });
-
-  $('.careers_select li').click(function() {
-    var activeTab = $(this).attr('data-tab2');
-    $('.careers_select li').removeClass('current2');
-    $('.tabcontent2').removeClass('current2');
-    $(this).addClass('current');
-    $('#' + activeTab).addClass('current2');
-  })
-})
-
-$(function(){
-$('.banner_01').mouseover(function(e){
-  $('.banner_01 .brand_hover_txt').addClass('dim_slide_up');
-  $('.banner_01 .brand_line').addClass('brand_line_hover');
-  $('.banner_01 .brand_line img').attr("src", "https://yogibo.kr/yogico/img/icon/g_off.png");
-  $('.banner_01 .brand_line').attr('src', 'https://yogibo.kr/yogico/img/icon/g_off.png');
-  $('.banner_01 .brand_dim').show();
-})
-$('.banner_01').mouseout(function(e){
-  $('.banner_01 .brand_hover_txt').removeClass('dim_slide_up');
-  $('.banner_01 .brand_line').removeClass('brand_line_hover');
-  $('.banner_01 .brand_line img').attr("src", "https://yogibo.kr/yogico/img/icon/g_on.png");
-  $('.banner_01 .brand_dim').hide();
-})
-
-$('.banner_02').mouseover(function(e){
-  $('.banner_02 .brand_hover_txt').addClass('dim_slide_up');
-  $('.banner_02 .brand_line').addClass('brand_line_hover');
-  $('.banner_02 .brand_line img').attr("src", "https://yogibo.kr/yogico/img/icon/b_off.png");
-  $('.banner_02 .brand_line').attr('src', 'https://yogibo.kr/yogico/img/icon/b_off.png');
-  $('.banner_02 .brand_dim').show();
-})
-$('.banner_02').mouseout(function(e){
-  $('.banner_02 .brand_hover_txt').removeClass('dim_slide_up');
-  $('.banner_02 .brand_line').removeClass('brand_line_hover');
-  $('.banner_02 .brand_line img').attr("src", "https://yogibo.kr/yogico/img/icon/b_on.png");
-  $('.banner_02 .brand_dim').hide();
-})
-
-
-$('.banner_03').mouseover(function(e){
-  $('.banner_03 .brand_dim').show();
-})
-$('.banner_03').mouseout(function(e){
-  $('.banner_03 .brand_dim').hide();
-})
-
-})
-  let navigate = useNavigate();//링크연결
   return (
-    <Routes>
-      <Route path="/" element={<Main  navigate={navigate}/>}>
-        <Route path="/" element={<Section/>}/>
-        <Route path="/visual" element={<Visual/>}/>      
-        <Route path="/news" element={<News/>}/>
-        <Route path="/Partners" element={<Partners/>}/>
-        <Route path="/choice" element={<Choice/>}/>
-        <Route path="/careers" element={<Careers/>}/>
-        <Route path="/corporation" element={<Corporation/>}/>
-        <Route path="/careers2" element={<Careers2/>}/>
-        <Route path="/news_letter" element={<News_letter/>}/>
-        <Route path="/service" element={<Service/>}/>       
-      </Route>
-        <Route path="*" element={<div>404. 페이지 링크</div>}/>
-    </Routes>
+    <Overlay>
+      <Modal>
+        <CloseBtn onClick={onClose}>×</CloseBtn>
+        <Title2>ON</Title2>
+        <Title>CONTACT</Title>
+        <Subtitle>Yogico.kr Renewal</Subtitle>
+
+        <Form onSubmit={handleSubmit}>
+          <Columns>
+            <Left>
+              <StyledInput
+                type="email"
+                placeholder="Company Email *"
+                value={companyEmail}
+                onChange={e => setCompanyEmail(e.target.value)}
+                required
+              />
+              <StyledInput
+                type="text"
+                placeholder="Company Name"
+                value={companyName}
+                onChange={e => setCompanyName(e.target.value)}
+              />
+              <FileInputWrapper>
+                <FileDisplayInput
+                  readOnly
+                  placeholder="Attach a file"
+                  value={fileName}
+                  onClick={handleFileClick}
+                />
+                <SearchButton type="button" onClick={handleFileClick}>
+                  Choose File
+                </SearchButton>
+                <HiddenFileInput
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                />
+              </FileInputWrapper>
+            </Left>
+            <Right>
+              <StyledTextarea
+                placeholder="Describe your collaboration request"
+                value={message}
+                onChange={e => setMessage(e.target.value)}
+              />
+            </Right>
+          </Columns>
+          <SendButton type="submit">SEND</SendButton>
+        </Form>
+      </Modal>
+    </Overlay>
   );
-};
-
-function Main(props){
-  return(
-    <>
-      <div id="yogi_corporation">
-        <div className="fixed_line"></div>
-        <div id="headerWrap">
-          <div className="header">
-            <div className="header_logo">
-              <div className="main_con">
-                 <Link to="/"><img src="https://yogibo.kr/yogico/img/icon/symbol.png" alt=""/></Link>
-              </div>
-            </div>
-            <div className="header_ham">
-            <div className="ham_icon">
-              <div id="line-top" className="line init top-reverse"></div>
-              <div id="line-mid" className="line init mid-reverse"></div>
-              <div id="line-bot" className="line init bot-reverse"></div>
-            </div>
-            </div>
-            <div className="header_vertical_txt"><Link to="/"><img src="https://yogibo.kr/yogico/img/icon/Signature03.png" alt=""/></Link></div>
-          </div>
-          <div className="gnb_black"></div>
-          <div className="aside_menu">
-            <div className="aside_inner">            
-            </div>
-            <div className="aside_gnb">
-              <div className="news_txt">
-                <dl>
-                  <dt><Link to="/">Yogi Corporation Inc.</Link></dt>
-                </dl>
-              </div>
-              <div className="brand_txt">
-                <dl>
-                  <dt>Brand</dt>
-                  <dd>
-                    <ul>
-                      <li onClick={() => window.open('http://yogibo.kr', '_blank')}>Yogibo</li>
-                      <li onClick={() =>window.open('http://betterair.kr','_blank')}>betterair</li>
-                    </ul>
-                  </dd>
-                </dl>
-              </div>
-              <div className="news_txt">
-                <dl>
-                  <dt><Link to="news">News</Link></dt>
-                </dl>
-              </div>
-              <div className="news_txt">
-                <dl>
-                  <dt><Link to="service">Service</Link></dt>
-                </dl>
-              </div>            
-              <div className="news_txt">
-                <dl>
-                  <dt><Link to="careers" className="careers">Careers</Link></dt>
-                </dl>
-              </div>
-              <div className="news_txt">
-                <dl>
-                  <dt><Link to="partners">Partners</Link></dt>
-                </dl>
-              </div>              
-            </div>        
-          </div>
-        </div>
-        <div className="article_menu" style={{display:'none'}}>
-          <ul>
-            <li onClick={()=>{props.navigate('/corporation')}}>YOGI CORPORATION</li>
-            <li onClick={()=>{props.navigate('/partners')}}>PARTNERS</li>
-          </ul>
-        </div>
-        <div className="contact_us"><Link to="careers">Careers <img src="https://yogibo.kr/web/img/icon/new/arrow_right.svg" alt=""/></Link></div>
-        <Outlet/>
-        <Footer/>
-      </div>
-    </>
-  )
 }
-
-//var num2 = 1;
-//document.querySelector('.ham_icon,.gnb_black,.news_txt').addEventListener('click')
-
-export default App;
