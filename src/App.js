@@ -194,6 +194,7 @@ const SendButton = styled.button`
   border: 1px solid #fff;
   font-size: 20px;
   cursor: pointer;
+  color:#fff;
 
   @media (max-width: 768px) {
     width: 100%;
@@ -255,7 +256,6 @@ export default function ContactModal({ onClose = () => {} }) {
   return (
     <Overlay>
       <Modal>
-        <CloseBtn onClick={onClose}>×</CloseBtn>
         <Title2>ON</Title2>
         <Title>CONTACT</Title>
         <Subtitle>Yogico.kr Renewal</Subtitle>
@@ -301,7 +301,7 @@ export default function ContactModal({ onClose = () => {} }) {
               />
             </Right>
           </Columns>
-          <SendButton type="submit">SEND</SendButton>
+          <SendButton type="submit" >SEND</SendButton>
         </Form>
       </Modal>
     </Overlay>
